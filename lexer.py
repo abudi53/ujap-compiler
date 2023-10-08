@@ -18,6 +18,35 @@ class Lexer():
         self.lexer.add('SUB', r'\-')
         # Numeros
         self.lexer.add('NUMERO', r'\d+')
+        # Strings
+        self.lexer.add('STRING', r'\".*?\"')
+        # Corchetes
+        self.lexer.add('ABRE_CORCHETE', r'\[')
+        self.lexer.add('CIERRA_CORCHETE', r'\]')
+        # Coma
+        self.lexer.add('COMA', r'\,')
+        # Llaves
+        self.lexer.add('ABRE_LLAVE', r'\{')
+        self.lexer.add('CIERRA_LLAVE', r'\}')
+        # Asignacion
+        self.lexer.add('ASIGNACION', r'\=')
+        # Identificador
+        self.lexer.add('IDENTIFICADOR', r'[a-zA-Z_][a-zA-Z0-9_]*')
+        # Comentario
+        self.lexer.add('COMENTARIO', r'\#.*')
+        # Operadores logicos
+        self.lexer.add('MAYOR_QUE', r'\>')
+        self.lexer.add('MENOR_QUE', r'\<')
+        self.lexer.add('MAYOR_IGUAL', r'\>\=')
+        self.lexer.add('MENOR_IGUAL', r'\<\=')
+        self.lexer.add('IGUAL', r'\=\=')
+        self.lexer.add('DIFERENTE', r'\!\=')
+        self.lexer.add('AND', r'\&\&')
+        self.lexer.add('OR', r'\|\|')
+        self.lexer.add('NOT', r'\!')
+        # Booleanos
+        self.lexer.add('TRUE', r'true')
+        self.lexer.add('FALSE', r'false')
         # Ignorar espacios
         self.lexer.ignore('\s+')
 
