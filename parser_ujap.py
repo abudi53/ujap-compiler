@@ -4,7 +4,7 @@ from ast_ujap import *
 
 
 class Parser():
-    def __init__(self):
+    def __init__(self, module, builder, printf):
         self.pg = ParserGenerator(
             # A list of all token names accepted by the parser.
             ['NUMERO', 'PRINT', 'ABRE_PAREN', 'CIERRA_PAREN',
@@ -14,10 +14,14 @@ class Parser():
              'IGUAL', 'DIFERENTE', 'AND', 'OR', 'NOT', 'TRUE', 'FALSE']
         )
 
+        self.module = module
+        self.builder = builder
+        self.printf = printf
+
     def parse(self):
-        @self.pg.production('program : PRINT ABRE_PAREN expression CIERRA_PAREN')
+        @self.pg.production('program : PRINT ABRE_PAREN expression CIERRA_PAREN PUNTO_COMA')
         def program(p):
-            return Print(p[2])
+            return Print(self.builder, self.module, self.printf, p[2])
 
         @self.pg.production('expression : expression SUM expression')
         @self.pg.production('expression : expression SUB expression')
@@ -35,48 +39,51 @@ class Parser():
             right = p[2]
             operator = p[1]
             if operator.gettokentype() == 'SUM':
-                return Sum(left, right)
+                return Sum(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'SUB':
-                return Sub(left, right)
+                return Sub(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'AND':
-                return And(left, right)
+                return And(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'OR':
-                return Or(left, right)
+                return Or(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'NOT':
-                return Not(left)
+                return Not(self.builder, self.module, left)
             elif operator.gettokentype() == 'IGUAL':
-                return Igual(left, right)
+                return Igual(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'DIFERENTE':
-                return Diferente(left, right)
+                return Diferente(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'MAYOR_QUE':
-                return Mayor_que(left, right)
+                return Mayor_que(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'MENOR_QUE':
-                return Menor_que(left, right)
+                return Menor_que(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'MAYOR_IGUAL':
-                return Mayor_igual(left, right)
+                return Mayor_igual(self.builder, self.module, left, right)
             elif operator.gettokentype() == 'MENOR_IGUAL':
-                return Menor_igual(left, right)
+                return Menor_igual(self.builder, self.module, left, right)
             
 
         @self.pg.production('expression : NUMERO')
         def number(p):
-            return Numero(p[0].value)
+            return Numero(self.builder, self.module, p[0].value)
         
         @self.pg.production('expression : STRING')
         def string(p):
-            return String(p[0].value)
+            return String(self.builder, self.module, p[0].value)
         
         @self.pg.production('expression : TRUE')
         def true(p):
-            return Boolean(p[0].value)
+            return Boolean(self.builder, self.module, p[0].value)
         
         @self.pg.production('expression : FALSE')
         def false(p):
-            return Boolean(p[0].value)
+            return Boolean(self.builder, self.module, p[0].value)
         
         @self.pg.production('expression : IDENTIFICADOR ASIGNACION expression')
         def statement(p):
+            # builder = ir.IRBuilder()
+            # module = ir.Module()
             return VarAssign(p[0].getstr(), p[2])
+            # var_assign.eval(builder, module)
 
 
         @self.pg.production('expression : ABRE_PAREN expression CIERRA_PAREN')
